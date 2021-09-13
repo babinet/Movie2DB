@@ -27,8 +27,8 @@ echo "${white}Start $START_TIME" >> RSync_SCRIPT.log
 #sudo mkdir -p  /MOUNT_4TO/_TRASH_TEMP_RSYNC
 # sudo chmod -R 777  /MOUNT_4TO/"_TRASH_TEMP_RSYNC"
 
-#rsync -trbaPt -e "ssh -p 1777" --log-file=RSync_SCRIPT.log --backup --backup-dir=/MOUNT_4TO/_TRASH_TEMP_RSYNC/Back_TMP --include="*.jpg" --include="*.png" --include="*.mp4" --include="*.srt" --exclude="*"  ../_Output/ lab@192.168.1.151:/MOUNT_4TO/_Output --delete --update
-rsync -trbaPt -e "ssh -p 1777" --include='*.jpg' --include='*.mp4' --include='*.srt' --include='*/' --exclude='*' --log-file=RSync_SCRIPT.log --backup --backup-dir=/MOUNT_4TO/_TRASH_TEMP_RSYNC/Back_TMP ../_Output/ lab@192.168.1.151:/MOUNT_4TO/_Output --delete --update | pv -lep -s 42 >/dev/null>> RSync_SCRIPT.log
+#rsync -trbaPt -e "ssh -p 1000" --log-file=RSync_SCRIPT.log --backup --backup-dir=/MOUNT_4TO/_TRASH_TEMP_RSYNC/Back_TMP --include="*.jpg" --include="*.png" --include="*.mp4" --include="*.srt" --exclude="*"  ../_Output/ lab@192.168.1.151:/MOUNT_4TO/_Output --delete --update
+rsync -trbaPt -e "ssh -p 1000" --include='*.jpg' --include='*.mp4' --include='*.srt' --include='*/' --exclude='*' --log-file=RSync_SCRIPT.log --backup --backup-dir=/MOUNT_4TO/_TRASH_TEMP_RSYNC/Back_TMP ../_Output/ bob@192.168.1.160:/MOUNT_4TO/_Output --delete --update | pv -lep -s 42 >/dev/null>> RSync_SCRIPT.log
 #| pv -lep -s 42
 echo "---> ${green}Rsync DONE${white}"
 #mv ../_TRASH_TEMP/RSYC_TRASH/Back_TMP ../_TRASH_TEMP/RSYC_TRASH/"$RsyncBackup"
