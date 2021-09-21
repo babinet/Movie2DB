@@ -261,11 +261,8 @@ printf '%s\n' 0a 'director1' . x | ex $temp/CSV_FIELDS/$id"_Directors.csv"
 
 # Genre
 echo -e "${white}---> Processing...\t\t\t\t\t\t\t\t\t\t${orange}Genre"
-awk '/<h4 class\=\"inline\">Genres:<\/h4>/,/<\/div>/' $temp/HTML/$id"_main.html" > $temp/HTML/$id"_Genre.html"
-#awk '/<h4 class\=\"inline\">Genres:<\/h4>/,/<\/div>/'
-awk -F'<\/a>' '{print $1}' $temp/HTML/$id"_Genre.html" | awk '!/^<a\ href/' | awk '!/<h4/' | awk '!/<\/div/' | awk '{gsub(/>\ /,"",$0)}1' > $temp/HTML/$id"_Genre_00.txt"
-tr '\n' @ < $temp/HTML/$id"_Genre_00.txt" > $temp/HTML/$id"_Genre_01.txt"
-sed 's/.$//' < $temp/HTML/$id"_Genre_01.txt" > $temp/CSV_FIELDS/$id"_Genre.csv"
+cat $temp/HTML/$id"_main.html" |tr -d '\n'  |sed 's/class\=\"GenresAndPlot/\
+A/g' |awk '/A__GenreChip/'| awk -F'presentation">' '{print $2}' | awk -F'<' '{print $1}' | tr '\n' @|sed 's/.$//' > $temp/CSV_FIELDS/$id"_Genre.csv"
 printf '%s\n' 0a 'genre1' . x | ex $temp/CSV_FIELDS/$id"_Genre.csv"
 
 # machine_name, url, id
@@ -1067,14 +1064,10 @@ sed 's/.$//' < $temp/HTML/$id"_SetDesigner_02.txt" > $temp/CSV_FIELDS/$id"_SetDe
 printf '%s\n' 0a 'SetDesigner' . x | ex $temp/CSV_FIELDS/$id"_SetDesigner.csv"
 
 #class name ( Makeup )
-echo -e "${white}---> Processing...\t\t\t\t\t\t\t\t\t\t${orange}Makeup Department"
-awk '/<h4 class\=\"dataHeaderWithBorder\">Makeup\ Department&nbsp\;<\/h4>/,/<\/table>/' $temp/HTML/"$id".html > "$temp"/HTML/"$id"_Makeup.html
-python2.7 _html2csv.py $temp/HTML/$id"_Makeup.html" &> /dev/null
-awk -F',' '{print $1}' $temp/HTML/$id"_Makeup.csv" > $temp/HTML/$id"_Makeup_00.txt"
-awk '{gsub(/\" /,"",$0)}1' $temp/HTML/$id"_Makeup_00.txt" |awk '{gsub(/\ "/,"",$0)}1' | awk '{gsub(/\"\"/,"",$0)}1' | awk 'NF > 0' > $temp/HTML/$id"_Makeup_01.txt"
-tr '\n' @ < $temp/HTML/$id"_Makeup_01.txt" > $temp/HTML/$id"_Makeup_02.txt"
-sed 's/.$//' < $temp/HTML/$id"_Makeup_02.txt" > $temp/CSV_FIELDS/$id"_Makeup.csv"
+cat $temp/HTML/"$id".html |tr -d '\n' | awk -F'id="make_up_department"' '{print $2}'|awk -F'<table' '{print "<table"$2}' | awk -F'</tbody>' '{print $1}'|sed 's/<tr>/\
+/g'|tr -d '\n'| sed 's/\/name/https:\/\/www.imdb.com\/name/g' | awk '{print $0"</table>"}' > $temp/CSV_FIELDS/$id"_Makeup.csv"
 printf '%s\n' 0a 'Makeup' . x | ex $temp/CSV_FIELDS/$id"_Makeup.csv"
+
 
 #For Wiki_infos fr
 mkdir -p $temp/WIKI_INFO
@@ -1251,7 +1244,7 @@ printf 'Season
 ' > "$temp"/CSV_FIELDS/"$id"_Episode.csv
 fi
 
-paste -d'|' $temp/CSV_FIELDS/$id"_mp4.csv" $temp/CSV_FIELDS/$id"_titlefr.csv" $temp/CSV_FIELDS/$id"_title.csv" $temp/CSV_FIELDS/$id"_taglines.csv" $temp/CSV_FIELDS/$id"_Directors.csv" $temp/CSV_FIELDS/$id"_Writing_Credits.csv" $temp/CSV_FIELDS/$id"_year.csv" $temp/CSV_FIELDS/$id"_Genre.csv" $temp/CSV_FIELDS/$id"_machine_name.csv" $temp/CSV_FIELDS/$id"_id.csv" $temp/CSV_FIELDS/$id"_url.csv" $temp/CSV_FIELDS/$id"_country.csv" $temp/CSV_FIELDS/$id"_budget.csv" $temp/CSV_FIELDS/$id"_plot_synopsis.csv" $temp/CSV_FIELDS/$id"_poster.csv" $temp/CSV_FIELDS/$id"_runtime.csv" $temp/CSV_FIELDS/$id"_sound_system.csv" $temp/CSV_FIELDS/$id"_duration.csv" $temp/CSV_FIELDS/$id"_framerate.csv" $temp/CSV_FIELDS/$id"_vsize.csv" $temp/CSV_FIELDS/$id"_filesize.csv" $temp/CSV_FIELDS/$id"_full_cast.csv" $temp/CSV_FIELDS/$id"_DOP.csv" $temp/CSV_FIELDS/$id"_Music.csv" $temp/CSV_FIELDS/$id"_Editors.csv" $temp/CSV_FIELDS/$id"_company.csv" $temp/CSV_FIELDS/$id"_color.csv" $temp/CSV_FIELDS/$id"_aspectratio.csv" $temp/CSV_FIELDS/$id"_rating.csv" $temp/CSV_FIELDS/$id"_releasedate.csv" $temp/CSV_FIELDS/$id"_locations.csv" $temp/CSV_FIELDS/$id"_production_dates.csv" $temp/CSV_FIELDS/$id"_filming_dates.csv" $temp/CSV_FIELDS/$id"_stills.csv" $temp/CSV_FIELDS/$id"_shtg.csv" $temp/CSV_FIELDS/$id"_trailers.csv" $temp/CSV_FIELDS/$id"_mof.csv" $temp/CSV_FIELDS/$id"_aka.csv" $temp/CSV_FIELDS/$id"_crazy_credits.csv" $temp/CSV_FIELDS/$id"_goofs.csv" $temp/CSV_FIELDS/$id"_trivia.csv" $temp/CSV_FIELDS/$id"_Season.csv" $temp/CSV_FIELDS/$id"_Episode.csv" $temp/CSV_FIELDS/$id"_Poducer.csv" $temp/CSV_FIELDS/$id"_Buttons_Menu.csv" $temp/CSV_FIELDS/$id"_SetDesigner.csv" > $file_no_ext_imdb"_MOVIE.csv"
+paste -d'|' $temp/CSV_FIELDS/$id"_mp4.csv" $temp/CSV_FIELDS/$id"_titlefr.csv" $temp/CSV_FIELDS/$id"_title.csv" $temp/CSV_FIELDS/$id"_taglines.csv" $temp/CSV_FIELDS/$id"_Directors.csv" $temp/CSV_FIELDS/$id"_Writing_Credits.csv" $temp/CSV_FIELDS/$id"_year.csv" $temp/CSV_FIELDS/$id"_Genre.csv" $temp/CSV_FIELDS/$id"_machine_name.csv" $temp/CSV_FIELDS/$id"_id.csv" $temp/CSV_FIELDS/$id"_url.csv" $temp/CSV_FIELDS/$id"_country.csv" $temp/CSV_FIELDS/$id"_budget.csv" $temp/CSV_FIELDS/$id"_plot_synopsis.csv" $temp/CSV_FIELDS/$id"_poster.csv" $temp/CSV_FIELDS/$id"_runtime.csv" $temp/CSV_FIELDS/$id"_sound_system.csv" $temp/CSV_FIELDS/$id"_duration.csv" $temp/CSV_FIELDS/$id"_framerate.csv" $temp/CSV_FIELDS/$id"_vsize.csv" $temp/CSV_FIELDS/$id"_filesize.csv" $temp/CSV_FIELDS/$id"_full_cast.csv" $temp/CSV_FIELDS/$id"_DOP.csv" $temp/CSV_FIELDS/$id"_Music.csv" $temp/CSV_FIELDS/$id"_Editors.csv" $temp/CSV_FIELDS/$id"_company.csv" $temp/CSV_FIELDS/$id"_color.csv" $temp/CSV_FIELDS/$id"_aspectratio.csv" $temp/CSV_FIELDS/$id"_rating.csv" $temp/CSV_FIELDS/$id"_releasedate.csv" $temp/CSV_FIELDS/$id"_locations.csv" $temp/CSV_FIELDS/$id"_production_dates.csv" $temp/CSV_FIELDS/$id"_filming_dates.csv" $temp/CSV_FIELDS/$id"_stills.csv" $temp/CSV_FIELDS/$id"_shtg.csv" $temp/CSV_FIELDS/$id"_trailers.csv" $temp/CSV_FIELDS/$id"_mof.csv" $temp/CSV_FIELDS/$id"_aka.csv" $temp/CSV_FIELDS/$id"_crazy_credits.csv" $temp/CSV_FIELDS/$id"_goofs.csv" $temp/CSV_FIELDS/$id"_trivia.csv" $temp/CSV_FIELDS/$id"_Season.csv" $temp/CSV_FIELDS/$id"_Episode.csv" $temp/CSV_FIELDS/$id"_Poducer.csv" $temp/CSV_FIELDS/$id"_Buttons_Menu.csv" $temp/CSV_FIELDS/$id"_SetDesigner.csv" $temp/CSV_FIELDS/$id"_Makeup.csv" > $file_no_ext_imdb"_MOVIE.csv"
 
 
 echo -e "${white}---> 🗜"\ " Create a zip archive whith /HTML/ for films\t\t\t\t\t\t\t\t${orange}"$FileDate"_"$imdbID"_backup.zip"
