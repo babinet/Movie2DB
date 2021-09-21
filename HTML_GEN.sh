@@ -230,7 +230,7 @@ echo "id="$id"" | awk -F'=' '{print $1, "\""$2"\""}' OFS='=' >> "$dir"/tmp_bash
 echo "file_no_ext_imdb="$file_no_ext_imdb"" | awk -F'=' '{print $1, "\""$2"\""}' OFS='=' >> "$dir"/tmp_bash
 echo "imdb_infomation="$imdb_infomation"" | sed -e 's/\/\//\//g' | awk -F'=' '{print $1, "\""$2"\""}' OFS='=' >> "$dir"/tmp_bash
 # Series
-if grep -q "button_panel navigation_panel" $temp/HTML/$id"_main.html"; then
+if grep -q 'data-testid="hero-subnav-bar-previous-episode-button"' $temp/HTML/$id"_main.html"; then
 echo "${orange}
 ####################################################################################################################
 ---> 📺"\ " Je suis une série
@@ -298,7 +298,7 @@ fi
 
 # Director of photography
 echo -e "${white}---> Processing...\t\t\t\t\t\t\t\t\t\t${orange}Director of photgraphy D.O.P"
-awk '/>Cinematography/,/<\/table>/' $temp/HTML/$id".html" > $temp/HTML/$id"_DOP.html"
+awk '/<h4 class\=\"dataHeaderWithBorder\">Cinematography/,/<\/table>/' $temp/HTML/$id".html" > $temp/HTML/$id"_DOP.html"
 python2.7 _html2csv.py $temp/HTML/$id"_DOP.html" &> /dev/null
 awk -F',' '{print $1}' $temp/HTML/$id"_DOP.csv" > $temp/HTML/$id"_DOP_00.txt"
 awk '{gsub(/\" /,"",$0)}1' $temp/HTML/$id"_DOP_00.txt" |awk '{gsub(/\ "/,"",$0)}1' | awk '{gsub(/\"\"/,"",$0)}1' | awk 'NF > 0' > $temp/HTML/$id"_DOP_01.txt"
@@ -873,7 +873,7 @@ printf '%s\n' 0a 'production_dates' . x | ex $temp/CSV_FIELDS/$id"_production_da
 
 # Film Music
 echo -e "${white}---> Processing...\t\t\t\t\t\t\t\t\t\t${orange}Film Music"
-awk '/>Music by&nbsp/,/<\/table>/' $temp/HTML/$id".html" > $temp/HTML/$id"_Music.html"
+awk '/<h4 class\=\"dataHeaderWithBorder\">Music by&nbsp\;<\/h4>/,/<\/table>/' $temp/HTML/$id".html" > $temp/HTML/$id"_Music.html"
 python2.7 _html2csv.py $temp/HTML/$id"_Music.html" &> /dev/null
 awk -F ',' '{ print $1}' OFS="|" $temp/HTML/$id"_Music.csv" > $temp/HTML/$id"_Music_01.txt"
 cat $temp/HTML/$id"_Music_01.txt" | awk '{gsub(/\"\ /,"",$0)}1' | awk '{gsub(/\ \"/,"",$0)}1' | tr '\n' @  | awk -F'@' '{print $1, $2 , $3}' OFS='@' >  $temp/CSV_FIELDS/$id"_Music.csv"
@@ -881,7 +881,7 @@ printf '%s\n' 0a 'music' . x | ex $temp/CSV_FIELDS/$id"_Music.csv"
 
 #Producers
 echo -e "${white}---> Processing...\t\t\t\t\t\t\t\t\t\t${orange}Produced by"
-awk '/>Produced by&nbsp/,/<\/table>/' $temp/HTML/$id".html" > $temp/HTML/$id"_Poducer.html"
+awk '/<h4 class\=\"dataHeaderWithBorder\">Produced by&nbsp;/,/<\/table>/' $temp/HTML/$id".html" > $temp/HTML/$id"_Poducer.html"
 python2.7 _html2csv.py $temp/HTML/$id"_Poducer.html" &> /dev/null
 awk -F ',' '{ print $1}' OFS="|" $temp/HTML/$id"_Poducer.csv" > $temp/HTML/$id"_Poducer_01.txt"
 cat $temp/HTML/$id"_Poducer_01.txt" | awk '{gsub(/\"\ /,"",$0)}1' | awk '{gsub(/\ \"/,"",$0)}1' | tr '\n' @ | awk -F'@' '{print $1, $2 , $3}' OFS='@' > $temp/CSV_FIELDS/$id"_Poducer.csv"
@@ -933,9 +933,8 @@ printf '%s\n' 0a 'releasedate' . x | ex $temp/CSV_FIELDS/$id"_releasedate.csv"
 
 # Rating
 echo -e "${white}---> Processing...\t\t\t\t\t\t\t\t\t\t${orange}Rating"
-awk '/<span itemprop\=\"ratingValue\">/,/<\/span>/' $temp/HTML/$id"_main.html" | awk 'gsub(/^.*<span itemprop\=\"ratingValue\">/, "")' | awk -F'<\/span>' '{print $1}' > $temp/CSV_FIELDS/$id"_rating.csv"
+cat $temp/HTML/$id"_main.html" | tr -d '\n' | awk '/>IMDb RATING<\/div>/,/<\/div>/'  | awk -F'AggregateRatingButton__RatingScore-sc-1ll29m0-1 iTLWoV' '{print $2}'| awk -F'>' '{print $2}'| awk -F'<' '{print $1}' > $temp/CSV_FIELDS/$id"_rating.csv"
 printf '%s\n' 0a 'rating' . x | ex $temp/CSV_FIELDS/$id"_rating.csv"
-
 # stills pictures stills
 # stills list
 if ls $file_no_ext_imdb"_stills"/*.jpg > /dev/null 2>&1
@@ -1069,7 +1068,7 @@ printf '%s\n' 0a 'SetDesigner' . x | ex $temp/CSV_FIELDS/$id"_SetDesigner.csv"
 
 #class name ( Makeup )
 echo -e "${white}---> Processing...\t\t\t\t\t\t\t\t\t\t${orange}Makeup Department"
-awk '/>Makeup\ Department&nbsp\;<\/h4>/,/<\/table>/' $temp/HTML/"$id".html > "$temp"/HTML/"$id"_Makeup.html
+awk '/<h4 class\=\"dataHeaderWithBorder\">Makeup\ Department&nbsp\;<\/h4>/,/<\/table>/' $temp/HTML/"$id".html > "$temp"/HTML/"$id"_Makeup.html
 python2.7 _html2csv.py $temp/HTML/$id"_Makeup.html" &> /dev/null
 awk -F',' '{print $1}' $temp/HTML/$id"_Makeup.csv" > $temp/HTML/$id"_Makeup_00.txt"
 awk '{gsub(/\" /,"",$0)}1' $temp/HTML/$id"_Makeup_00.txt" |awk '{gsub(/\ "/,"",$0)}1' | awk '{gsub(/\"\"/,"",$0)}1' | awk 'NF > 0' > $temp/HTML/$id"_Makeup_01.txt"
@@ -1176,7 +1175,7 @@ rsync -vrltDh --update --stats --human-readable "$LeDossierSource" ../_Output/_S
 rm -R ../_Output/_SERIES/"$Tv_serie_title"/"$seasonNbr"_EP_"$LeNumeroDeLEpisode"_"$id"_"$year"/"$id"_"$year"_Fields/HTML/*
 
 all_Series_csvs=$(
-find ../_Output/_SERIES/"$Tv_serie_title" -name '*_SERIE.csv' -exec echo {} +
+find ../_Output/_SERIES/"$Tv_serie_title" -name '*_SERIE.csv' -exec echo {} + | sed 's/\/\//\//g'
 )
 awk 'FNR==1 && NR!=1{next;}{print"\n"}' $all_Series_csvs > ../_Output/_SERIES/"$Tv_serie_title"/"$Tv_serie_title"_Serie_principale.csv
 
