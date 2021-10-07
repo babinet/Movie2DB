@@ -1007,15 +1007,15 @@ sed 's/.$//' < $temp/HTML/$id"_mof_02.txt" > $temp/CSV_FIELDS/$id"_mof.csv"
 printf '%s\n' 0a 'mof' . x | ex $temp/CSV_FIELDS/$id"_mof.csv"
 
 
-# Director of photgraphy DOP
-echo -e "${white}---> Processing...\t\t\t\t\t\t\t\t\t\t${orange}Director of photgraphy D.O.P"
-awk '/<h4 class\=\"dataHeaderWithBorder\">Cinematography/,/<\/table>/' $temp/HTML/$id".html" > $temp/HTML/$id"_DOP.html"
-python2.7 _html2csv.py $temp/HTML/$id"_DOP.html" &> /dev/null
-awk -F',' '{print $1}' $temp/HTML/$id"_DOP.csv" > $temp/HTML/$id"_DOP_00.txt"
-awk '{gsub(/\" /,"",$0)}1' $temp/HTML/$id"_DOP_00.txt" |awk '{gsub(/\ "/,"",$0)}1' | awk '{gsub(/\"\"/,"",$0)}1' | awk 'NF > 0' > $temp/HTML/$id"_DOP_01.txt"
-tr '\n' @ < $temp/HTML/$id"_DOP_01.txt" > $temp/HTML/$id"_DOP_02.txt"
-sed 's/.$//' < $temp/HTML/$id"_DOP_02.txt" > $temp/CSV_FIELDS/$id"_DOP.csv"
-printf '%s\n' 0a 'dop' . x | ex $temp/CSV_FIELDS/$id"_DOP.csv"
+## Director of photgraphy DOP
+#echo -e "${white}---> Processing...\t\t\t\t\t\t\t\t\t\t${orange}Director of photgraphy D.O.P"
+#awk '/<h4 class\=\"dataHeaderWithBorder\">Cinematography/,/<\/table>/' $temp/HTML/$id".html" > $temp/HTML/$id"_DOP.html"
+#python2.7 _html2csv.py $temp/HTML/$id"_DOP.html" &> /dev/null
+#awk -F',' '{print $1}' $temp/HTML/$id"_DOP.csv" > $temp/HTML/$id"_DOP_00.txt"
+#awk '{gsub(/\" /,"",$0)}1' $temp/HTML/$id"_DOP_00.txt" |awk '{gsub(/\ "/,"",$0)}1' | awk '{gsub(/\"\"/,"",$0)}1' | awk 'NF > 0' > $temp/HTML/$id"_DOP_01.txt"
+#tr '\n' @ < $temp/HTML/$id"_DOP_01.txt" > $temp/HTML/$id"_DOP_02.txt"
+#sed 's/.$//' < $temp/HTML/$id"_DOP_02.txt" > $temp/CSV_FIELDS/$id"_DOP.csv"
+#printf '%s\n' 0a 'dop' . x | ex $temp/CSV_FIELDS/$id"_DOP.csv"
 
 
 echo -e "${white}---> Processing...\t\t\t\t\t\t\t\t\t\t${orange}Crazy Credits"
