@@ -295,13 +295,16 @@ fi
 
 # Director of photography
 echo -e "${white}---> Processing...\t\t\t\t\t\t\t\t\t\t${orange}Director of photgraphy D.O.P"
-awk '/<h4 class\=\"dataHeaderWithBorder\">Cinematography/,/<\/table>/' $temp/HTML/$id".html" > $temp/HTML/$id"_DOP.html"
+
+
+awk '/id="cinematographer"/,/<\/table>/' $temp/HTML/$id".html" > $temp/HTML/$id"_DOP.html"
 python2.7 _html2csv.py $temp/HTML/$id"_DOP.html" &> /dev/null
-awk -F',' '{print $1}' $temp/HTML/$id"_DOP.csv" > $temp/HTML/$id"_DOP_00.txt"
-awk '{gsub(/\" /,"",$0)}1' $temp/HTML/$id"_DOP_00.txt" |awk '{gsub(/\ "/,"",$0)}1' | awk '{gsub(/\"\"/,"",$0)}1' | awk 'NF > 0' > $temp/HTML/$id"_DOP_01.txt"
+awk -F',' '{print $1}' $temp/HTML/$id"_DOP.csv" |awk '{gsub(/\" /,"",$0)}1'|awk '{gsub(/\ "/,"",$0)}1' | awk '{gsub(/\"\"/,"",$0)}1' > $temp/HTML/$id"_DOP_01.txt"
 tr '\n' @ < $temp/HTML/$id"_DOP_01.txt" > $temp/HTML/$id"_DOP_02.txt"
 sed 's/.$//' < $temp/HTML/$id"_DOP_02.txt" > $temp/CSV_FIELDS/$id"_DOP.csv"
 printf '%s\n' 0a 'dop' . x | ex $temp/CSV_FIELDS/$id"_DOP.csv"
+cp $temp/HTML/$id"_DOP_02.txt" ../
+cp $temp/CSV_FIELDS/$id"_DOP.csv" ../
 # Film Editor
 echo -e "${white}---> Processing...\t\t\t\t\t\t\t\t\t\tFilm editor"
 awk '/class\=\"dataHeaderWithBorder\">Film Editing by&nbsp\;<\/h4>/,/<\/table>/' $temp/HTML/$id".html" > $temp/HTML/$id"_Editors.html"
@@ -353,33 +356,32 @@ $duration
 
 # aspectratio
 echo -e "${white}---> Processing...\t\t\t\t\t\t\t\t\t\t${orange}Aspect/Ratio"
-awk '/<h4 class\=\"inline\">Aspect Ratio:<\/h4>\ /,/<\/div>/' $temp/HTML/$id"_main.html" | sed -n 's/[^\ ]*\>\ //p' | sed -n 's/[^\ ]*\t\ //p' | sed -n 's/[^\ ]*\h4\ //p' | awk 'sub(/^ */, "")' > $temp/CSV_FIELDS/$id"_aspectratio.csv"
+cat $temp/HTML/$id"_main.html" | tr -d '\n' | awk -F'ipc-metadata-list-item__label">Aspect ratio<' '{print $2}' | awk -F'<ul' '{print $2}'| awk -F'</ul>' '{print $1}'| sed 's/<li/\
+<li/g' | awk -F'>' '{print $3}'| awk -F'<' '{print $1}'| awk NF|tr '\n' '@'| sed 's/.$//' > $temp/CSV_FIELDS/$id"_aspectratio.csv"
 printf '%s\n' 0a 'aspectratio' . x | ex $temp/CSV_FIELDS/$id"_aspectratio.csv"
 
 # sound system
 echo -e "${white}---> Processing...\t\t\t\t\t\t\t\t\t\t${orange}Sound System"
-awk '/<h4 class\=\"inline\">Sound Mix:<\/h4>/,/<\/div>/' $temp/HTML/$id"_main.html" | awk '!/<h4 class\=\"inline\">Sound Mix:<\/h4>/' | sed -e 's/<span\ class\=\"ghost\">\|<\/span>/@/g' > $temp/HTML/$id"_sound_system.txt"
-tr '\n' '\\' < $temp/HTML/$id"_sound_system.txt" | awk -F'\\' '{print $2, $3 ,$4 ,$5 ,$6 ,$7, $8}' | sed -e 's/<\/a>/\ /g' | perl -lpwe 's/<.*?>//g' | tr -d '>' | sed -e 's/        //g' | sed -e 's/  //g' > $temp/HTML/$id"_sound_system_01.txt"
-sed 's/.$//' < $temp/HTML/$id"_sound_system_01.txt" | sed -e 's/(/ (/g' | sed -e 's/@ /@/g' > $temp/CSV_FIELDS/$id"_sound_system.csv"
+cat $temp/HTML/$id"_main.html" | tr -d '\n' | awk -F'ipc-metadata-list-item__label">Sound mix<' '{print $2}' | awk -F'<ul' '{print $2}'| awk -F'</ul>' '{print $1}'| sed 's/<li/\
+<li/g' | awk -F'>' '{print $3}'| awk -F'<' '{print $1}'| awk NF|tr '\n' '@'| sed 's/.$//' > $temp/CSV_FIELDS/$id"_sound_system.csv"
 printf '%s\n' 0a 'soundmix1' . x | ex $temp/CSV_FIELDS/$id"_sound_system.csv"
 
 # color
 echo -e "${white}---> Processing...\t\t\t\t\t\t\t\t\t\t${orange}Color"
-awk '/<h4 class\=\"inline\">Color:<\/h4>/,/<\/div>/' $temp/HTML/$id"_main.html" | awk '!/<h4 class\=\"inline\">Color:<\/h4>/' | sed -e 's/<span\ class\=\"ghost\">\|<\/span>/@/g' > $temp/HTML/$id"_color.txt"
-tr '\n' '\\' < $temp/HTML/$id"_color.txt" | awk -F'\\' '{print $2, $3 ,$4 ,$5 ,$6}' | sed -e 's/<\/a>/\ /g' | perl -lpwe 's/<.*?>//g' | tr -d '>' | sed -e 's/        //g' | sed -e 's/  //g' > $temp/HTML/$id"_color_01.txt"
-sed 's/.$//' < $temp/HTML/$id"_color_01.txt" | sed -e 's/(/ (/g' | sed -e 's/@ /@/g' > $temp/CSV_FIELDS/$id"_color.csv"
+cat $temp/HTML/$id"_main.html" | tr -d '\n' | awk -F'ipc-metadata-list-item__label">Color<' '{print $2}' | awk -F'<ul' '{print $2}'| awk -F'</ul>' '{print $1}'| sed 's/<li/\
+<li/g' | awk -F'>' '{print $3}'| awk -F'<' '{print $1}'| awk NF|tr '\n' '@'| sed 's/.$//' > $temp/CSV_FIELDS/$id"_color.csv"
 printf '%s\n' 0a 'color' . x | ex $temp/CSV_FIELDS/$id"_color.csv"
 
 # Country
 echo -e "${white}---> Processing...\t\t\t\t\t\t\t\t\t\t${orange}Country"
-awk '/<h4 class\=\"inline\">Country:<\/h4>/,/<\/div>/' $temp/HTML/$id"_main.html" | awk '!/<h4 class\=\"inline\">Country:<\/h4>/' | sed -e 's/<span\ class\=\"ghost\">\|<\/span>/@/g' > $temp/HTML/$id"_country.txt"
-tr '\n' '\\' < $temp/HTML/$id"_country.txt" | awk -F'\\' '{print $2, $3 ,$4 ,$5 ,$6, $7, $8, $9, $10, $11}' | sed -e 's/<\/a>/\ /g' | perl -lpwe 's/<.*?>//g' | tr -d '>' | sed -e 's/        //g' | sed -e 's/  //g' > $temp/HTML/$id"_country_01.txt"
-sed -e 's/(/ (/g' $temp/HTML/$id"_country_01.txt"  | sed -e 's/@ /@/g' > $temp/CSV_FIELDS/$id"_country.csv"
+cat $temp/HTML/$id"_main.html" | tr -d '\n' | awk -F' of origin<' '{print $2}'|awk -F'</ul>' '{print $1}' | awk -F'<ul' '{print $2}'| awk -F'presentation">' '{print $2}'|awk -F'</ul>' '{print $1}' | sed 's/<li/\
+<li/g' | awk NF | awk -F'tt_dt_cn">' '{print $2}' | awk -F'<' '{print $1}'|tr '\n' @ |sed 's/.$//' > $temp/CSV_FIELDS/$id"_country.csv"
 printf '%s\n' 0a 'country' . x | ex $temp/CSV_FIELDS/$id"_country.csv"
+
 
 # runtime
 echo -e "${white}---> Processing...\t\t\t\t\t\t\t\t\t\t${orange}Runtime"
-awk '/<span id="titleYear">/,/<\/time>/' $temp/HTML/$id"_main.html" | awk '/<time datetime\=/,/<\/time>/' | sed -e "s/^[ \t]*//" | awk 'NR==2 {print}'  > $temp/CSV_FIELDS/$id"_runtime.csv"
+cat $temp/HTML/$id"_main.html" | tr -d '\n' | awk -F'>Runtime' '{print $2}' | awk -F'ipc-metadata-list-item__list-content-item' '{print $2}' | awk -F'>' '{print $2}'| awk -F'<' '{print $1}'  > $temp/CSV_FIELDS/$id"_runtime.csv"
 printf '%s\n' 0a 'runtime' . x | ex $temp/CSV_FIELDS/$id"_runtime.csv"
 
 # Budget
@@ -925,7 +927,7 @@ printf '%s\n' 0a 'company' . x | ex $temp/CSV_FIELDS/$id"_company.csv"
 
 # Release Date France
 echo -e "${white}---> Processing...\t\t\t\t\t\t\t\t\t\t${orange}Release Date France"
-awk '/<h4 class\=\"inline\">Release\ Date:<\/h4>/,/<span class\=\"see-more\ inline\">/' $temp/HTML/$id"_main.html" | awk '{gsub(/<h4\ class\=\"\inline\">Release\ Date:<\/h4>\ /,"",$0)}1' | awk '!/<span class\=\"see-more\ inline\">/' | awk '{gsub(/\ \ \ \ /,"",$0)}1' > $temp/CSV_FIELDS/$id"_releasedate.csv"
+cat $temp/HTML/$id"_main.html" | tr -d '\n' | awk -F'Release date' '{print $2}'|awk -F'<a' '{print $2}'|awk -F'>' '{print $2}'|awk -F'<' '{print $1}' > $temp/CSV_FIELDS/$id"_releasedate.csv"
 printf '%s\n' 0a 'releasedate' . x | ex $temp/CSV_FIELDS/$id"_releasedate.csv"
 
 # Rating
@@ -1065,7 +1067,7 @@ printf '%s\n' 0a 'SetDesigner' . x | ex $temp/CSV_FIELDS/$id"_SetDesigner.csv"
 
 #class name ( Makeup )
 cat $temp/HTML/"$id".html |tr -d '\n' | awk -F'id="make_up_department"' '{print $2}'|awk -F'<table' '{print "<table"$2}' | awk -F'</tbody>' '{print $1}'|sed 's/<tr>/\
-/g'|tr -d '\n'| sed 's/\/name/https:\/\/www.imdb.com\/name/g' | awk '{print $0"</table>"}' > $temp/CSV_FIELDS/$id"_Makeup.csv"
+/g'|tr -d '\n'| sed 's/\/name/https:\/\/www.imdb.com\/name/g' | sed 's/a href/a class="makupclass" data-toggle="tooltip" data-placement="right" title="" data-original-title="Sur IMDB" href/g'| awk '{print $0"</table>"}' > $temp/CSV_FIELDS/$id"_Makeup.csv"
 printf '%s\n' 0a 'Makeup' . x | ex $temp/CSV_FIELDS/$id"_Makeup.csv"
 
 
