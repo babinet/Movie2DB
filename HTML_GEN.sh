@@ -261,8 +261,8 @@ printf '%s\n' 0a 'director1' . x | ex $temp/CSV_FIELDS/$id"_Directors.csv"
 
 # Genre
 echo -e "${white}---> Processing...\t\t\t\t\t\t\t\t\t\t${orange}Genre"
-cat $temp/HTML/$id"_main.html" |tr -d '\n'  |sed 's/class\=\"GenresAndPlot/\
-A/g' |awk '/A__GenreChip/'| awk -F'presentation">' '{print $2}' | awk -F'<' '{print $1}' | tr '\n' @|sed 's/.$//' > $temp/CSV_FIELDS/$id"_Genre.csv"
+cat $temp/HTML/$id"_main.html" |tr -d '\n'|tr -d '\r' |awk -F'data-testid="genres"' '{print $2}'|sed 's/<span class="ipc-chip__text">/\
+<span class="ipc-chip__text">/g'|awk '/ipc-chip__text/'|awk -F'</span>' '{print $1}' | awk -F'>' '{print $2}'|awk '!/Back to top/'|tr '\n' '@' |sed 's/@$//g' > $temp/CSV_FIELDS/$id"_Genre.csv"
 printf '%s\n' 0a 'genre1' . x | ex $temp/CSV_FIELDS/$id"_Genre.csv"
 
 # machine_name, url, id
@@ -303,8 +303,6 @@ awk -F',' '{print $1}' $temp/HTML/$id"_DOP.csv" |awk '{gsub(/\" /,"",$0)}1'|awk 
 tr '\n' @ < $temp/HTML/$id"_DOP_01.txt" > $temp/HTML/$id"_DOP_02.txt"
 sed 's/.$//' < $temp/HTML/$id"_DOP_02.txt" > $temp/CSV_FIELDS/$id"_DOP.csv"
 printf '%s\n' 0a 'dop' . x | ex $temp/CSV_FIELDS/$id"_DOP.csv"
-cp $temp/HTML/$id"_DOP_02.txt" ../
-cp $temp/CSV_FIELDS/$id"_DOP.csv" ../
 # Film Editor
 echo -e "${white}---> Processing...\t\t\t\t\t\t\t\t\t\tFilm editor"
 awk '/class\=\"dataHeaderWithBorder\">Film Editing by&nbsp\;<\/h4>/,/<\/table>/' $temp/HTML/$id".html" > $temp/HTML/$id"_Editors.html"
@@ -932,7 +930,7 @@ printf '%s\n' 0a 'releasedate' . x | ex $temp/CSV_FIELDS/$id"_releasedate.csv"
 
 # Rating
 echo -e "${white}---> Processing...\t\t\t\t\t\t\t\t\t\t${orange}Rating"
-cat $temp/HTML/$id"_main.html" | tr -d '\n' | awk '/>IMDb RATING<\/div>/,/<\/div>/'  | awk -F'AggregateRatingButton__RatingScore-sc-1ll29m0-1 iTLWoV' '{print $2}'| awk -F'>' '{print $2}'| awk -F'<' '{print $1}' > $temp/CSV_FIELDS/$id"_rating.csv"
+cat $temp/HTML/$id"_main.html" | tr -d '\n' | awk '/>IMDb RATING<\/div>/,/<\/div>/'  | awk -F'__score' '{print $2}'| awk -F'>' '{print $3}'| awk -F'<' '{print $1}' > $temp/CSV_FIELDS/$id"_rating.csv"
 printf '%s\n' 0a 'rating' . x | ex $temp/CSV_FIELDS/$id"_rating.csv"
 # stills pictures stills
 # stills list
@@ -1161,7 +1159,7 @@ printf 'menu
 cat ButtonsTmp.txt >> "$temp"/CSV_FIELDS/"$id"_Buttons_Menu.csv
 
 # Assemblage des fields     #Si c'est une SERIES
-paste -d'|' $temp/CSV_FIELDS/$id"_mp4.csv" $temp/CSV_FIELDS/$id"_titlefr.csv" $temp/CSV_FIELDS/$id"_title.csv" $temp/CSV_FIELDS/$id"_taglines.csv" $temp/CSV_FIELDS/$id"_Directors.csv" $temp/CSV_FIELDS/$id"_Writing_Credits.csv" $temp/CSV_FIELDS/$id"_year.csv" $temp/CSV_FIELDS/$id"_Genre.csv" $temp/CSV_FIELDS/$id"_machine_name.csv" $temp/CSV_FIELDS/$id"_id.csv" $temp/CSV_FIELDS/$id"_url.csv" $temp/CSV_FIELDS/$id"_country.csv" $temp/CSV_FIELDS/$id"_budget.csv" $temp/CSV_FIELDS/$id"_plot_synopsis.csv" $temp/CSV_FIELDS/$id"_poster.csv" $temp/CSV_FIELDS/$id"_runtime.csv" $temp/CSV_FIELDS/$id"_sound_system.csv" $temp/CSV_FIELDS/$id"_duration.csv" $temp/CSV_FIELDS/$id"_framerate.csv" $temp/CSV_FIELDS/$id"_vsize.csv" $temp/CSV_FIELDS/$id"_filesize.csv" $temp/CSV_FIELDS/$id"_full_cast.csv" $temp/CSV_FIELDS/$id"_DOP.csv" $temp/CSV_FIELDS/$id"_Music.csv" $temp/CSV_FIELDS/$id"_Editors.csv" $temp/CSV_FIELDS/$id"_company.csv" $temp/CSV_FIELDS/$id"_color.csv" $temp/CSV_FIELDS/$id"_aspectratio.csv" $temp/CSV_FIELDS/$id"_rating.csv" $temp/CSV_FIELDS/$id"_releasedate.csv" $temp/CSV_FIELDS/$id"_locations.csv" $temp/CSV_FIELDS/$id"_production_dates.csv" $temp/CSV_FIELDS/$id"_filming_dates.csv" $temp/CSV_FIELDS/$id"_stills.csv" $temp/CSV_FIELDS/$id"_shtg.csv" $temp/CSV_FIELDS/$id"_trailers.csv" $temp/CSV_FIELDS/$id"_mof.csv" $temp/CSV_FIELDS/$id"_aka.csv" $temp/CSV_FIELDS/$id"_crazy_credits.csv" $temp/CSV_FIELDS/$id"_goofs.csv" $temp/CSV_FIELDS/$id"_trivia.csv" $temp/CSV_FIELDS/$id"_Season.csv" $temp/CSV_FIELDS/$id"_Episode.csv" $temp/CSV_FIELDS/$id"_Poducer.csv" $temp/CSV_FIELDS/$id"_Buttons_Menu.csv" $temp/CSV_FIELDS/$id"_SetDesigner.csv" > $file_no_ext_imdb"_SERIE.csv"
+paste -d'|' $temp/CSV_FIELDS/$id"_mp4.csv" $temp/CSV_FIELDS/$id"_titlefr.csv" $temp/CSV_FIELDS/$id"_title.csv" $temp/CSV_FIELDS/$id"_taglines.csv" $temp/CSV_FIELDS/$id"_Directors.csv" $temp/CSV_FIELDS/$id"_Writing_Credits.csv" $temp/CSV_FIELDS/$id"_year.csv" $temp/CSV_FIELDS/$id"_Genre.csv" $temp/CSV_FIELDS/$id"_machine_name.csv" $temp/CSV_FIELDS/$id"_id.csv" $temp/CSV_FIELDS/$id"_url.csv" $temp/CSV_FIELDS/$id"_country.csv" $temp/CSV_FIELDS/$id"_budget.csv" $temp/CSV_FIELDS/$id"_plot_synopsis.csv" $temp/CSV_FIELDS/$id"_poster.csv" $temp/CSV_FIELDS/$id"_runtime.csv" $temp/CSV_FIELDS/$id"_sound_system.csv" $temp/CSV_FIELDS/$id"_duration.csv" $temp/CSV_FIELDS/$id"_framerate.csv" $temp/CSV_FIELDS/$id"_vsize.csv" $temp/CSV_FIELDS/$id"_filesize.csv" $temp/CSV_FIELDS/$id"_full_cast.csv" $temp/CSV_FIELDS/$id"_DOP.csv" $temp/CSV_FIELDS/$id"_Music.csv" $temp/CSV_FIELDS/$id"_Editors.csv" $temp/CSV_FIELDS/$id"_company.csv" $temp/CSV_FIELDS/$id"_color.csv" $temp/CSV_FIELDS/$id"_aspectratio.csv" $temp/CSV_FIELDS/$id"_rating.csv" $temp/CSV_FIELDS/$id"_releasedate.csv" $temp/CSV_FIELDS/$id"_locations.csv" $temp/CSV_FIELDS/$id"_production_dates.csv" $temp/CSV_FIELDS/$id"_filming_dates.csv" $temp/CSV_FIELDS/$id"_stills.csv" $temp/CSV_FIELDS/$id"_shtg.csv" $temp/CSV_FIELDS/$id"_trailers.csv" $temp/CSV_FIELDS/$id"_mof.csv" $temp/CSV_FIELDS/$id"_aka.csv" $temp/CSV_FIELDS/$id"_crazy_credits.csv" $temp/CSV_FIELDS/$id"_goofs.csv" $temp/CSV_FIELDS/$id"_trivia.csv" $temp/CSV_FIELDS/$id"_Season.csv" $temp/CSV_FIELDS/$id"_Episode.csv" $temp/CSV_FIELDS/$id"_Poducer.csv" $temp/CSV_FIELDS/$id"_Buttons_Menu.csv" $temp/CSV_FIELDS/$id"_SetDesigner.csv" $temp/CSV_FIELDS/$id"_Makeup.csv" > $file_no_ext_imdb"_SERIE.csv"
 
 LeDossierSource=$(echo "$temp"| sed 's/'"$id"_"$year"'_Fields//')
 echo -e "${white}---> \$LeDossierSource\t\t\t\t\t\t\t\t\t\t${orange}$LeDossierSource"
